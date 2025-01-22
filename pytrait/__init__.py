@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
-from pytrait.errors import *
-from pytrait.trait import Trait
-from pytrait.impl import Impl
-from pytrait.struct import Struct
+from .errors import *
+from .trait import Trait
+from .impl import Impl
+from .struct import Struct
+from .enum import Enum
