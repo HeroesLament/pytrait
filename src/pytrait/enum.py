@@ -11,7 +11,7 @@ from .impl import Impl
 # 1. INTERNAL BASE ENUM (NO TRAIT METACLASS)
 ################################################################################
 
-class _BaseEnum(PyEnum):
+class _BaseEnum(PyEnum, metaclass=EnumTraitMeta):
     """
     A plain subclass of Python's Enum. 
     It overrides require_inherit_traits with a no-op to avoid any PyTrait checks.
@@ -77,16 +77,18 @@ class EnumTraitMeta(type(_BaseEnum), Impl):
 # 3. PUBLIC ENUM CLASS
 ################################################################################
 
-class Enum(_BaseEnum, metaclass=EnumTraitMeta):
+class Enum(_BaseEnum):
     """
     The public, PyTrait-compatible Enum class.
     Users should subclass this, e.g.:
 
+        ```
         from pytrait.enum import Enum
 
         class Color(Enum):
             RED = 1
             GREEN = 2
             BLUE = 3
+        ```
     """
     pass

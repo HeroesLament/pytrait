@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+          "name": "Python Debugger: Example Basics",
+          "type": "debugpy",
+          "request": "launch",
+          "program": "examples/basics.py",
+          "console": "integratedTerminal",
+          "env": {
+              "PYTHONHOME": "/opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13",
+          }
+      },
+      {
+        "name": "Debug Pytest via uv-venv",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/.venv/bin/python",
+        "args": [
+          "-m", "pytest",
+          "-s",
+          "--maxfail=5"
+        ],
+        "console": "integratedTerminal",
+        "justMyCode": true
+      },
+      {
+        "name": "Debug Basic Example (Attach)",
+        "type": "debugpy",
+        "request": "attach",
+        "connect": {
+          "host": "localhost",
+          "port": 5678
+        },
+        "pathMappings": [
+          {
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "${workspaceFolder}"
+          }
+        ],
+        "justMyCode": false
+      }
+    ]
+  }
+  

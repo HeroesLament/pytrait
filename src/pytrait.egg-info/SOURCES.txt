@@ -1,0 +1,17 @@
+LICENSE
+MANIFEST.in
+README.md
+pyproject.toml
+setup.cfg
+src/pytrait/__init__.py
+src/pytrait/enum.py
+src/pytrait/errors.py
+src/pytrait/impl.py
+src/pytrait/struct.py
+src/pytrait/trait.py
+src/pytrait.egg-info/PKG-INFO
+src/pytrait.egg-info/SOURCES.txt
+src/pytrait.egg-info/dependency_links.txt
+src/pytrait.egg-info/requires.txt
+src/pytrait.egg-info/top_level.txt
+tests/test_traits.py

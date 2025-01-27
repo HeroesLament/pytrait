@@ -3,6 +3,8 @@ from typing import Any, Dict, Generator, Tuple
 
 from .errors import DisallowedInitError, InheritanceError, NonMethodAttrError
 
+import sys
+
 
 def _disallowed_init(self, *args, **kwargs):
     # Raises an error like "Trait MyTrait cannot be instantiated" or
@@ -66,7 +68,11 @@ class Trait(ABCMeta):
         """
 
         # Whitelist just these two CPython-internal attributes
-        cpython_internal_attrs = {"__firstlineno__", "__static_attributes__"}
+        cpython_internal_attrs = {"__firstlineno__", "__static_attributes__", "__annotations__"}
+
+        # Include debug-specific attributes if running in debug mode
+        if hasattr(sys, 'gettrace') and sys.gettrace() is not None:
+            cpython_internal_attrs.add("__pydevd_ret_val_dict")
 
         non_method_attrs = []
         for attr, value in attrs.items():
@@ -79,7 +85,7 @@ class Trait(ABCMeta):
 
         if non_method_attrs:
             non_method_attrs_str = ", ".join(non_method_attrs)
-            raise pytrait.NonMethodAttrError(
+            raise NonMethodAttrError(
                 f"{cls.__class__.__name__} {name} must not have non-method "
                 f"attributes, got: {non_method_attrs_str}"
             )

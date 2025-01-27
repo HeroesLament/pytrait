@@ -33,6 +33,13 @@ class ImplAnimal(Animal, metaclass=Impl, target="Person"):
     def noise(self) -> str:
         return "Hello"
 
+class ImplPerson(Person, metaclass=Impl, target="Dutchman"):
+    def first_name(self) -> str:
+        return self._first_name
+
+    def last_name(self) -> str:
+        return "Wilders"
+
 
 class ImplPerson(Person, metaclass=Impl, target="Englishman"):
     def first_name(self) -> str:
@@ -42,6 +49,18 @@ class ImplPerson(Person, metaclass=Impl, target="Englishman"):
         return "Smith"
 
 
+class ImplPerson(Person, metaclass=Impl, target="Chinaman"):
+    def first_name(self) -> str:
+        return self._first_name
+
+    def last_name(self) -> str:
+        return "Chang"
+
+
+class Dutchman(metaclass=Struct):
+    _first_name: str
+
+
 class Englishman(metaclass=Struct):
     _first_name: str
 
@@ -49,6 +68,17 @@ class Englishman(metaclass=Struct):
         return "Good day to you, sir!"
 
 
+class Chinaman(metaclass=Struct):
+    _first_name: str
+
+    def noise(self) -> str:
+        return "Xiang Chong Ni Hao!"
+
+
 if __name__ == "__main__":
+    geert = Dutchman("Geert")
+    geert.talk()
     johnny = Englishman("John")
     johnny.talk()
+    lu = Chinaman("Lu")
+    lu.talk()
