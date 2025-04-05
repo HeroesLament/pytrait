@@ -1,13 +1,15 @@
 from abc import ABCMeta
 from typing import Any, Dict, Generator, Tuple
 
-import pytrait
+from .errors import DisallowedInitError, InheritanceError, NonMethodAttrError
+
+import sys
 
 
 def _disallowed_init(self, *args, **kwargs):
     # Raises an error like "Trait MyTrait cannot be instantiated" or
     # "Impl ImplMyTraitForMyStruct cannot be instantiated"
-    raise pytrait.DisallowedInitError(
+    raise DisallowedInitError(
         f"{self.__class__.__class__.__name__} {self.__class__.__name__} cannot "
         f"be instantiated."
     )
@@ -54,27 +56,40 @@ class Trait(ABCMeta):
         """Require that we only inhert from Trait classes."""
         for base in bases:
             if base.__class__ is not Trait:
-                raise pytrait.InheritanceError(
+                raise InheritanceError(
                     f"{name} must inherit from Traits only, "
                     f"got: {base.__name__} of type {base.__class__.__name__}"
                 )
 
-    def require_method_attrs(cls, name: str, attrs: Dict[str, Any]):
+    def require_method_attrs(cls, name: str, attrs: dict[str, Any]):
         """
         Require that the class has no non-method attributes.
-
         State should be defined in Structs only.
         """
-        non_method_attrs = list()
+
+        # Whitelist just these two CPython-internal attributes
+        cpython_internal_attrs = {"__firstlineno__", "__static_attributes__", "__annotations__"}
+
+        # Include debug-specific attributes if running in debug mode
+        if hasattr(sys, 'gettrace') and sys.gettrace() is not None:
+            cpython_internal_attrs.add("__pydevd_ret_val_dict")
+
+        non_method_attrs = []
         for attr, value in attrs.items():
+            # Skip internal CPython attributes
+            if attr in cpython_internal_attrs:
+                continue
+            
             if attr not in cls.allowed_attrs and not callable(value):
                 non_method_attrs.append(attr)
+
         if non_method_attrs:
-            non_method_attrs = ", ".join(non_method_attrs)
-            raise pytrait.NonMethodAttrError(
+            non_method_attrs_str = ", ".join(non_method_attrs)
+            raise NonMethodAttrError(
                 f"{cls.__class__.__name__} {name} must not have non-method "
-                f"attributes, got: {non_method_attrs}"
+                f"attributes, got: {non_method_attrs_str}"
             )
+
 
     def supertraits(cls) -> Generator["Trait", None, None]:
         """Yields this class and any supertraits recursively."""

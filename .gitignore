@@ -1,0 +1,15 @@
+# Ignore vscode directories
+.vscode/
+
+#  Ignore uv build and dist directories
+build/
+dist/
+
+#  Ignore Pycache
+__pycache__
+
+#  Ignore uv version lock
+uv.lock
+
+#  Ignore Eggs
+*.egg-info

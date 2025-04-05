@@ -1,8 +1,8 @@
 from abc import ABCMeta
 from typing import Any, Dict, Generator, List, Optional, Tuple
 
-import pytrait
-from pytrait import Trait
+from .errors import NamingConventionError, PytraitError
+from .trait import Trait
 
 
 class Impl(Trait):
@@ -76,14 +76,24 @@ class Impl(Trait):
         super(ABCMeta, cls).__init__(name, bases, attrs)
 
     def require_naming_convention(cls, name: str, trait_name: str, target_name: str):
+        # 1. Detect if it's the special Enum class or NOT a real impl class:
+        if name == "Enum" and cls.__module__ == "pytrait.enum":
+            # This is our special 'Enum' base class. Skip the naming rule.
+            return
+
+        # 2. If everything is normal, proceed with the existing logic:
         if name != f"Impl{trait_name}For{target_name}":
-            raise pytrait.NamingConventionError(
+            raise NamingConventionError(
                 "We require either naming all Impl classes like "
                 "ImplTraitForStruct, or providing the target argument."
             )
 
-    def require_no_abstract_methods(cls, name: str, base: Trait, attrs: Dict[str, Any]):
-        # Check that we implement all Trait abstract methods
+    def require_no_abstract_methods(cls, name: str, base: Any, attrs: Dict[str, Any]):
+        # If the base isn't a Trait, skip it entirely
+        if not hasattr(base, "__abstractmethods__"):
+            return
+
+        # If it is a Trait, check unimplemented abstract methods
         base_abstractmethods = set(base.__abstractmethods__)
         for attr, value in attrs.items():
             if callable(value) and hasattr(base, attr):
@@ -91,10 +101,11 @@ class Impl(Trait):
                     base_abstractmethods.remove(attr)
 
         if base_abstractmethods:
-            abstractmethods = ", ".join(f"{name}()" for name in base_abstractmethods)
-            raise pytrait.PytraitError(
-                f"Impl {name} must implement required methods: " f"{abstractmethods}"
+            abstractmethods = ", ".join(f"{m}()" for m in base_abstractmethods)
+            raise PytraitError(
+                f"Impl {name} must implement required methods: {abstractmethods}"
             )
+
 
     def traits(cls) -> Generator[Trait, None, None]:
         """

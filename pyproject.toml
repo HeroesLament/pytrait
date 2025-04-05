@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytrait"
+version = "0.0.4"
+description = "A Rust-inspired trait system for Python"
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+authors = [
+  { name = "PyTrait Authors", email = "maintainers@example.com" }
+]
+keywords = ["traits", "rust-like", "metaclass", "abc", "dataclass"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11"
+]
+requires-python = ">=3.7"
+
+# List runtime dependencies here (if any).
+dependencies = [
+]
+
+
+[project.optional-dependencies]
+test = [
+  "pytest>=7.0.0",
+]
+
+[project.urls]
+"Source Code" = "https://github.com/HeroesLament/pytrait"
+"Issues" = "https://github.com/HeroesLament/pytrait/issues"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages]
+find = { where = ["src"], include = ["pytrait"] }
+
